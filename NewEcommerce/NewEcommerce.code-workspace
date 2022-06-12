@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "photos",
+			"path": "..\\..\\StipStore\\media\\photos"
+		},
+		{
+			"name": "templates",
+			"path": "..\\..\\StipStore\\templates"
+		},
+		{
+			"name": "NewEcommerce",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

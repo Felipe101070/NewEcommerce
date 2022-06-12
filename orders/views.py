@@ -1,12 +1,10 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from carts.models import CartItem
 from .forms import OrderForm
 import datetime
 from .models import Order, Payment, OrderProduct
 import json
-from store.models import Product
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 
@@ -28,11 +26,8 @@ def payments(request):
     order.is_ordered = True
     order.save()
     
-    data = {
-        'order_number': order.order_number,
-        'transID': payment.payment_id,
-    }
-    return JsonResponse(data)
+    
+    return render(request, 'orders/payments.html')
 
 def place_order(request, total=0, quantity=0,):
     current_user = request.user
@@ -67,7 +62,6 @@ def place_order(request, total=0, quantity=0,):
             data.order_note = form.cleaned_data['order_note']
             data.order_total = grand_total
             data.tax = tax
-            data.ip = request.META.get('REMOTE_ADDR')
             data.save()
             yr = int(datetime.date.today().strftime('%Y'))
             dt = int(datetime.date.today().strftime('%d'))

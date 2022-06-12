@@ -1,19 +1,9 @@
-import requests
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegistrationForm
 from .models import Account
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-
-
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage
-
 from carts.views import _cart_id
 from carts.models import Cart, CartItem
 
@@ -30,9 +20,9 @@ def register(request):
             username = email.split("@")[0]
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
             user.phone_number = phone_number
+            user.is_active = True
             user.save()
 
-            return redirect('/accounts/login/?command=verification&email='+email)
     else:
         form = RegistrationForm()
     context = {
@@ -90,16 +80,6 @@ def login(request):
                 pass
             auth.login(request, user)
             messages.success(request, 'Voce esta logado')
-            url = request.META.get('HTTP_REFERER')
-            try:
-                query = requests.utils.urlparse(url).query
-                # next=/cart/checkout/
-                params = dict(x.split('=') for x in query.split('&'))
-                if 'next' in params:
-                    nextPage = params['next']
-                    return redirect(nextPage)
-            except:
-                return redirect('store')
         else:
             messages.error(request, 'Dados de login incorretos')
             return redirect('login')
